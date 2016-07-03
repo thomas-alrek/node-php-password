@@ -1,0 +1,14 @@
+{
+  "name": "node-php-password",
+  "version": "0.0.1",
+  "description": "A node compaitiblity layer to verify and store php password hash",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thomas Alrek <thomas@alrek.no>",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.3.0"
+  }
+}
