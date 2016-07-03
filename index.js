@@ -77,7 +77,11 @@ function password_hash(password, algorithm, options){
 }
 
 function password_needs_rehash(hash, algorithm, options){
-    var info = password_get_info(hash);
+    try{
+        var info = password_get_info(hash);
+    }catch(e){
+        return true;
+    }
     if(typeof aliases[algorithm] !== 'undefined'){
         algorithm = aliases[algorithm];
     }
@@ -87,12 +91,12 @@ function password_needs_rehash(hash, algorithm, options){
     if(algorithms[algorithm].name == info.algoName){
         if(typeof options !== 'undefined' && typeof options.cost !== 'undefined'){
             if(info.options.cost != options.cost){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 function password_verify(password, hash){
