@@ -1,28 +1,59 @@
-var algorithms = require("./algorithms.json");
-var hash_regex = /(\$\d+[a-zA-Z]+?\$)(\d+)\$([\.\/\da-zA-Z]+)/g;
+var glob = require("glob");
+var path = require('path');
+var algorithms = {};
+var aliases = require("./package.json").aliases;
+
+/* load algorithm modules */
+glob.sync('./algorithms/*.js').forEach(function (file) {
+    try{
+        var algorithm = require(path.resolve(file));
+        if(typeof(algorithm.name) !== 'string'){
+            throw("Module has invalid name");
+        }
+        if(typeof algorithms[algorithm.name] !== 'undefined'){
+            throw("Multiple module instances with name '" + algorithm.name + "'");
+        }
+        algorithms[algorithm.name] = algorithm;
+        if(!(algorithms[algorithm.name].expression instanceof RegExp)){
+            throw("Module has invalid expression");
+        }
+        if(typeof algorithms[algorithm.name].verify !== 'function'){
+            throw("Module verify() is not a valid function");
+        }
+        if(typeof algorithms[algorithm.name].cost !== 'function'){
+            throw("Module cost() is not a valid function");
+        }
+        if(typeof algorithms[algorithm.name].hash !== 'function'){
+            throw("Module hash() is not a valid function");
+        }
+    }catch(e){
+        throw("Invalid algorithm module");
+    }
+});
+
+if(algorithms.length == 0){
+    throw("exception no algorithms loaded");
+}
 
 function password_get_info(hash){
-    var match = hash_regex.exec(hash);
-    hash_regex.lastIndex = 0;
+    var found = false;
     var info = {
-        algo: "",
         algoName: "",
         options: {
             cost: 0
         }
     };
-    if(match == null){
-        //throw exception
-        return info;
+    for(var key in algorithms){
+        algorithms[key].expression.lastIndex = 0;
+        if(algorithms[key].expression.test(hash)){
+            info.algoName = algorithms[key].name;
+            info.options.cost = algorithms[key].cost(hash);
+            found = true;
+            break;
+        }
     }
-    if(typeof match[1] !== 'undefined' && typeof algorithms[match[1]] !== 'undefined'){
-        info.algo = algorithms[match[1]].index;
-        info.algoName = algorithms[match[1]].name;
-    }else{
-        //throw exception
-    }
-    if(typeof match[2] !== 'undefined'){
-        info.options.cost = parseInt(match[2]);
+    if(!found){
+        throw("exception unknown algorithm");
     }
     return info;
 }
@@ -35,19 +66,24 @@ function password_hash(password, algorithm, options){
     if(typeof options == 'undefined'){
         options = {};
     }
-    if(typeof options.cost == 'undefined'){
-        options.cost = 10;
+    if(typeof aliases[algorithm] !== 'undefined'){
+        algorithm = aliases[algorithm];
     }
-    try{
-        algo = require("./wrappers/" + algorithms[algorithm].name + ".js");
-    }catch(e){
-        //Wrapper for info.algoName doesn't exist
+    if(typeof algorithms[algorithm] == 'undefined'){
+        throw("exception unknown algorithm");
     }
-    return algorithms[algorithm].id + options.cost + "$" + algo.hash(password, options);
+    algo = algorithms[algorithm];
+    return algo.hash(password, options);
 }
 
 function password_needs_rehash(hash, algorithm, options){
     var info = password_get_info(hash);
+    if(typeof aliases[algorithm] !== 'undefined'){
+        algorithm = aliases[algorithm];
+    }
+    if(typeof algorithms[algorithm] == 'undefined'){
+        throw("exception unknown algorithm");
+    }
     if(algorithms[algorithm].name == info.algoName){
         if(typeof options !== 'undefined' && typeof options.cost !== 'undefined'){
             if(info.options.cost != options.cost){
@@ -61,13 +97,7 @@ function password_needs_rehash(hash, algorithm, options){
 
 function password_verify(password, hash){
     var info = password_get_info(hash);
-    var algo;
-    try{
-        algo = require("./wrappers/" + info.algoName + ".js");
-    }catch(e){
-        //Wrapper for info.algoName doesn't exist
-    }
-    return algo.verify(password, hash);
+    return algorithms[info.algoName].verify(password, hash);
 }
 
 exports.password_get_info = password_get_info;
