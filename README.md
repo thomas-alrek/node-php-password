@@ -23,7 +23,7 @@ var hash = Password.hash("password123");
 ```
 *If algorithm isn't defined, **"PASSWORD_DEFAULT"** will be used*
 
-*If not options is supplied, a **cryptographically secure** salt will be generated with the minimum recommended cost value.*
+*If no options is supplied, a **cryptographically secure** salt will be generated with the minimum recommended cost value.*
 
 ### To verify a password against an existing hash in a database o.l:
 ```javascript
@@ -54,6 +54,9 @@ var hash = Password.hash("password123", "PASSWORD_DEFAULT", options);
 ```javascript
 "$2y$10$qwertyuiopasdfghjklzxO3U1f6PD/l04UrnxUgya51pjyLtkGNQi"
 ```
+
+**WARNING** It is not recommended to generate a salt manually. The default salt that is generated is a tested, and proven cryptographically secure value. Use this option with care.
+The cost value should be set to a value that makes the hashing take at least 50ms.
 
 ### Check if password needs rehash
 If you have a mix of passwords hashed with different algorithms (md5, sha256, etc...), or with a different cost value, you can check if they comply with your password policy by checking if they need a rehash. If they do, you can prompt your user to update their password.
