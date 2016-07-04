@@ -1,7 +1,18 @@
+/**
+ * bcrypt 
+ *
+ * @package node-php-password
+ * @copyright (c) 2016, Thomas Alrek
+ * @author Thomas Alrek <thomas@alrek.no>
+ */
+
 exports.name = "PASSWORD_BCRYPT";
 
 var BCrypt = require("bcryptjs");
 var expression = /\$(2[a|x|y])\$(\d+)\$(.{53})/g;
+var defaultOptions = {
+    cost: 10
+}
 
 function verify(password, hash){
     expression.lastIndex = 0;
@@ -12,16 +23,25 @@ function verify(password, hash){
 
 function hash(password, options){
     expression.lastIndex = 0;
+    var salt;
     if(typeof options == 'undefined'){
-        options = {};
+        options = defaultOptions;
     }
     if(typeof options.cost == 'undefined'){
-        options.cost = 10;
+        options.cost = defaultOptions.cost;
     }
-    if(options.cost < 10){
-        options.cost = 10;
+    if(options.cost < defaultOptions.cost){
+        options.cost = defaultOptions.cost;
     }
-    var salt = BCrypt.genSaltSync(options.cost);
+    if(typeof options.salt !== 'undefined'){
+        console.log("Warning: Password.hash(): Use of the 'salt' option to Password.hash is deprecated");
+        if(options.salt.length < 16){
+            throw("Provided salt is too short: " + options.salt.length + " expecting 16");
+        }
+        salt = "$2y$" + options.cost + "$" + options.salt;
+    }else{
+        salt = BCrypt.genSaltSync(options.cost);
+    }
     var hash = BCrypt.hashSync(password, salt);
     var output = expression.exec(hash);
     return "$2y$" + options.cost + "$" + output[3];;
@@ -37,6 +57,7 @@ function cost(hash){
 }
 
 exports.expression = expression;
+exports.defaultOptions = defaultOptions;
 exports.verify = verify;
 exports.cost = cost;
 exports.hash = hash;

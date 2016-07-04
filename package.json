@@ -1,20 +1,35 @@
 {
   "name": "node-php-password",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A node compatibility layer to verify and hash php compatible password hashes",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alrek-consulting/node-php-password.git"
   },
+  "keywords": [
+    "php",
+    "password",
+    "security",
+    "bcrypt",
+    "hash"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --reporter spec test"
   },
   "author": "Thomas Alrek <thomas@alrek.no>",
   "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/alrek-consulting/node-php-password/issues"
+  },
+  "homepage": "https://github.com/alrek-consulting/node-php-password#readme",
   "dependencies": {
     "bcryptjs": "^2.3.0",
     "glob": "^7.0.5"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "chai": "^3.5.0"
   },
   "aliases": {
     "PASSWORD_DEFAULT": "PASSWORD_BCRYPT"
