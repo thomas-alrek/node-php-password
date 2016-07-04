@@ -6,6 +6,11 @@ Designed to be **future proof** for new hashing algorithms.
 
 node-php-password is a solution for every kind of webapp which has a user database with passwords hashed with PHP's password_hash. Instead of starting from scratch, just use this package to get compatibility with PHP.
 
+### Installation
+```
+npm install node-php-password
+```
+
 ### Usage:
 ```javascript
 var Password = require("node-php-password");
