@@ -12,11 +12,13 @@ var Password = require("node-php-password");
 var hash = Password.hash("password123");
 // Password.hash(password, [algorithm], [options]);
 ```
-
 **Output:**
 ```javascript
 "$2y$10$8mNOnsos8qo4qHLcd32zrOg7gmyvfZ6/o9.2nsP/u6TRbrANdLREy"
 ```
+*If algorithm isn't defined, **"PASSWORD_DEFAULT"** will be used*
+
+*If not options is supplied, a **cryptographically secure** salt will be generated with the minimum recommended cost value.*
 
 ### To verify a password against an existing hash in a database o.l:
 ```javascript
