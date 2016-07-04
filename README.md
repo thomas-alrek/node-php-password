@@ -52,10 +52,13 @@ var hash = Password.hash("password123", "PASSWORD_DEFAULT", options);
 If you have a mix of passwords hashed with different algorithms (md5, sha256, etc...), or with a different cost value, you can check if they comply with your password policy by checking if they need a rehash. If they do, you can prompt your user to update their password.
 ```javascript
 var Password = require("node-php-password");
-var hash = Password.hash("password123", "PASSWORD_DEFAULT", {cost: 10});
-if(Password.needsRehash(hash, "PASSWORD_DEFAULT", {cost: 11}){
-   //Password needs rehash, prompt the user to renew their password
-}else{
-   //Password is OK.
+var user_password = "password123";
+var hash = Password.hash(user_password, "PASSWORD_DEFAULT", {cost: 10});
+
+if(Password.verify(user_password, hash){
+   if(Password.needsRehash(hash, "PASSWORD_DEFAULT", {cost: 11}){
+      //Password needs to be rehashed
+      hash = Password.hash(user_password, "PASSWORD_DEFAULT", {cost: 11});
+   }
 }
 ```
