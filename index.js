@@ -14,7 +14,7 @@ var aliases = require("./package.json").aliases;
 var algorithms = {};
 
 /* load algorithm modules */
-glob.sync('./algorithms/*.js').forEach(function (file) {
+glob.sync(path.resolve(__dirname+'/algorithms/*.js')).forEach(function (file) {
     try{
         var algorithm = require(path.resolve(file));
         
