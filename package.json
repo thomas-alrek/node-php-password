@@ -1,6 +1,6 @@
 {
   "name": "node-php-password",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A node compatibility layer to verify and hash php compatible password hashes",
   "main": "index.js",
   "repository": {
