@@ -3,6 +3,7 @@
   "version": "0.1.2",
   "description": "A node compatibility layer to verify and hash php compatible password hashes",
   "main": "index.js",
+  "types": "types.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alrek-consulting/node-php-password.git"

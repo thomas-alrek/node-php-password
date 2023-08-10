@@ -12,10 +12,20 @@ npm install node-php-password
 ```
 
 ### Usage:
+For JavaScript:
 ```javascript
 var Password = require("node-php-password");
-var hash = Password.hash("password123");
+
+var pwdHash = Password.hash("password123");
 // Password.hash(password, [algorithm], [options]);
+```
+
+For TypeScript
+```typescript
+import { hash } from "node-php-password";
+
+const pwdHash = hash("password123");
+// hash(password, [algorithm], [options]);
 ```
 **Output:**
 ```javascript
@@ -26,11 +36,24 @@ var hash = Password.hash("password123");
 *If no options is supplied, a **cryptographically secure** salt will be generated with the minimum recommended cost value.*
 
 ### To verify a password against an existing hash in a database o.l:
+For JavaScript:
 ```javascript
 var Password = require("node-php-password");
-var hash = "$2y$10$8mNOnsos8qo4qHLcd32zrOg7gmyvfZ6/o9.2nsP/u6TRbrANdLREy";
+var pwdHash = "$2y$10$8mNOnsos8qo4qHLcd32zrOg7gmyvfZ6/o9.2nsP/u6TRbrANdLREy";
 
-if(Password.verify("password123", hash)){
+if(Password.verify("password123", pwdHash)){
+   //Authentication OK
+}else{
+   //Authentication FAILED
+}
+```
+For TypeScript:
+```typescript
+import { verify } from "node-php-password";
+
+const pwdHash = "$2y$10$8mNOnsos8qo4qHLcd32zrOg7gmyvfZ6/o9.2nsP/u6TRbrANdLREy";
+
+if(verify("password123", pwdHash)){
    //Authentication OK
 }else{
    //Authentication FAILED
@@ -38,6 +61,8 @@ if(Password.verify("password123", hash)){
 ```
 
 ### Options
+
+For JavaScript
 ```javascript
 var Password = require("node-php-password");
 var options = {
@@ -47,7 +72,21 @@ var options = {
 // Valid algorithms are "PASSWORD_DEFAULT", and "PASSWORD_BCRYPT"
 // "PASSWORD_DEFAULT" is just an alias to "PASSWORD_BCRYPT", to be more
 // compatible with PHP
-var hash = Password.hash("password123", "PASSWORD_DEFAULT", options);
+var pwdHash = Password.hash("password123", "PASSWORD_DEFAULT", options);
+```
+
+For TypeScript
+```typescript
+impor { hash } from "node-php-password";
+
+const options = {
+   cost: 10,
+   salt: "qwertyuiopasdfghjklzxc"
+}
+// Valid algorithms are "PASSWORD_DEFAULT", and "PASSWORD_BCRYPT"
+// "PASSWORD_DEFAULT" is just an alias to "PASSWORD_BCRYPT", to be more
+// compatible with PHP
+const pwdHash = hash("password123", "PASSWORD_DEFAULT", options);
 ```
 
 **Output:**
@@ -60,15 +99,31 @@ The cost value should be set to a value that makes the hashing take at least 50m
 
 ### Check if password needs rehash
 If you have a mix of passwords hashed with different algorithms (md5, sha256, etc...), or with a different cost value, you can check if they comply with your password policy by checking if they need a rehash. If they do, you can prompt your user to update their password.
+
+For JavaScript
 ```javascript
 var Password = require("node-php-password");
 var user_password = "password123";
-var hash = Password.hash(user_password, "PASSWORD_DEFAULT", {cost: 10});
+var pwdHash = Password.hash(user_password, "PASSWORD_DEFAULT", {cost: 10});
 
-if(Password.verify(user_password, hash){
-   if(Password.needsRehash(hash, "PASSWORD_DEFAULT", {cost: 11}){
+if(Password.verify(user_password, pwdHash)){
+   if(Password.needsRehash(pwdHash, "PASSWORD_DEFAULT", {cost: 11})){
       //Password needs to be rehashed
-      hash = Password.hash(user_password, "PASSWORD_DEFAULT", {cost: 11});
+      pwdHash = Password.hash(user_password, "PASSWORD_DEFAULT", {cost: 11});
+   }
+}
+```
+For TypeScript
+```typescript
+import { hash, verify, needsRehash }"node-php-password";
+
+const user_password = "password123";
+let pwdHash = hash(user_password, "PASSWORD_DEFAULT", {cost: 10});
+
+if(verify(user_password, hash)){
+   if(needsRehash(hash, "PASSWORD_DEFAULT", {cost: 11})){
+      //Password needs to be rehashed
+      pwdHash = hash(user_password, "PASSWORD_DEFAULT", {cost: 11});
    }
 }
 ```
